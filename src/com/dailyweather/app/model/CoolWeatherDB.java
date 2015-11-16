@@ -14,7 +14,7 @@ import android.database.sqlite.SQLiteDatabase;
 /**
  * 对 数据库进行处理的操作类，保存（省份，城市，县级）信息进表格，添加（省份，城市，县级）信息进表格的操作
  * @author wanjiali
- *
+ * 
  */
 public class CoolWeatherDB {
 
