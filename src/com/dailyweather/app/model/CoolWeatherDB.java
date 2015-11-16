@@ -11,6 +11,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+/**
+ * 对 数据库进行处理的操作类，保存（省份，城市，县级）信息进表格，添加（省份，城市，县级）信息进表格的操作
+ * @author wanjiali
+ *
+ */
 public class CoolWeatherDB {
 
 	public static final String DB_NAME = "cool_weather";
@@ -44,6 +49,11 @@ public class CoolWeatherDB {
 
 	}
 
+	/**
+	 * 将 Province的信息插入表格
+	 * 主要将Province 对象的两个实例域 province_name，province_code 保存到 实例域。
+	 * @param province
+	 */
 	public void savePronvince(Province province) {
 		if (province == null) {
 			ContentValues values = new ContentValues();
@@ -57,6 +67,13 @@ public class CoolWeatherDB {
 
 	}
 
+	/**
+	 * 查询数据库中的省份信息， 每一个省份的具体信息作为一个 List<Province> 对象 ，具体包括三个参数
+	 * id :这个是 省份对应在 数据中的 id
+	 * province_name :省份名称
+	 * province_code :省份的代码（也即是在 天气接口中的 代码标号）
+	 * @return List<Province> :省份列表
+	 */
 	public List<Province> loadProvinces() {
 		List<Province> list = new ArrayList<Province>();
 
