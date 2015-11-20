@@ -14,6 +14,7 @@
         android:icon="@drawable/logo"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <activity android:name="com.dailyweather.app.activity.WeatherActivity"></activity>
         <activity
             android:name="com.dailyweather.app.activity.ChooseAreaActivity"
             android:label="@string/app_name" >

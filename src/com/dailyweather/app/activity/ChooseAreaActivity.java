@@ -15,7 +15,10 @@ import android.R;
 import android.R.integer;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.TextureView;
 import android.view.View;
@@ -63,7 +66,24 @@ public class ChooseAreaActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
+
 		super.onCreate(savedInstanceState);
+
+		SharedPreferences sharedPreferences = PreferenceManager
+				.getDefaultSharedPreferences(this);
+
+		
+		if(sharedPreferences.getBoolean( "city_selected", false))
+		{
+			Intent intent =new Intent (ChooseAreaActivity.this,WeatherActivity.class);
+			
+			startActivity(intent);
+			
+			finish();
+			return;
+			
+		}
+		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(com.dailyweather.app.R.layout.choose_area);// 不要忘记加上 包名
 
@@ -98,7 +118,7 @@ public class ChooseAreaActivity extends Activity {
 							"点击的城市 是" + selectedProvince.getProvinceName()
 									+ "代号是"
 									+ selectedProvince.getProvinceCode()
-									+ "ID 是"+selectedProvince.getId(),
+									+ "ID 是" + selectedProvince.getId(),
 							Toast.LENGTH_LONG).show();
 					queryCities();
 
@@ -107,7 +127,18 @@ public class ChooseAreaActivity extends Activity {
 					selectedCity = cities.get(position);
 
 					queryCounties();
+				}else if(currentLevel == LEVEL_COUNTY)
+				{
+					String countyCodeString = counties.get(position).getCountyCode();
+					
+					Intent intent = new Intent (ChooseAreaActivity.this,WeatherActivity.class);
+					intent.putExtra( "county_code", countyCodeString);
+					startActivity(intent);
+					finish();
+					
 				}
+				
+				
 
 			}
 		});
@@ -156,7 +187,7 @@ public class ChooseAreaActivity extends Activity {
 	/**
 	 * 查询city信息，并且加载到当前视图中来
 	 */
-	private  void queryCities() {
+	private void queryCities() {
 
 		cities = coolWeatherDB.loadCity(selectedProvince.getId());
 
@@ -188,7 +219,7 @@ public class ChooseAreaActivity extends Activity {
 	/**
 	 * 查询county信息，并且加载到当前视图中来
 	 */
-	private  void queryCounties() {
+	private void queryCounties() {
 
 		counties = coolWeatherDB.loadCounties(selectedCity.getId());
 
