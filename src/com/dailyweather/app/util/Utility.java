@@ -4,6 +4,7 @@ import java.net.ResponseCache;
 
 import android.R.integer;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.dailyweather.app.model.City;
 import com.dailyweather.app.model.CoolWeatherDB;
@@ -35,7 +36,7 @@ public class Utility {
 			 */
 			String[] allProvinces = response.split(",");
 
-			if (allProvinces != null && allProvinces.length > 0) {
+			if ((allProvinces != null) &&( allProvinces.length > 0)) {
 				for (String p : allProvinces) {
 					String[] array = p.split("\\|");
 					Province province = new Province();
@@ -75,11 +76,13 @@ public class Utility {
 			// 所以直接用这个,就可以分割这个数据，存入到allCities对象中。
 			String[] allCities = response.split(",");
 
-			if (allCities != null && allCities.length > 0) {
+			Log.d( "Util", allCities[9]);
+			if ((allCities != null) && (allCities.length > 0)) {
 				for (String c : allCities) {
 					// 将用 | 分割的城市名和城市编号分割开，并分别存储到对应的City对象中。进而同步到数据库中。
 
 					String[] array = c.split("\\|");
+					Log.d( "Util ", array[1]);
 					City city = new City();
 
 					city.setCityCode(array[0]);
@@ -89,9 +92,11 @@ public class Utility {
 					city.setProvinceId(provinceId);
 
 					coolWeatherDB.saveCity(city);
-					return true;
+					
 				}
+				return true;
 			}
+			
 
 		}
 
@@ -101,24 +106,30 @@ public class Utility {
 	public synchronized static boolean handleCountyResponse(
 			CoolWeatherDB coolWeatherDB, String response, int cityId) {
 
-		if (!TextUtils.isEmpty(response)) {
+		if (! TextUtils.isEmpty(response)) {
+			//从返回读取所有的 县级名称
 			String[] allCounties = response.split(",");
 
-			if (allCounties != null && allCounties.length > 0) {
-				County county = new County();
+		    Log.d( "coutiescccccccccccccccccccc", allCounties[9]);
+		    Log.d("cityIDIDIDIDIDIDIDIDI", cityId +"");
+			if ((allCounties != null) && (allCounties.length > 0)) {
+				
 				for (String c : allCounties) {
 					String[] countyInfoString = c.split("\\|");
 
+					County county = new County();
+					Log.d( "countyInfo", countyInfoString[1]);
 					county.setCountyCode(countyInfoString[0]);
 					county.setCountyName(countyInfoString[1]);
-					county.setId(cityId);
+					county.setCityId(cityId);
 
 					coolWeatherDB.saveCounty(county);
-
+					
 				}
+				return true;
 			}
 
-			return true;
+			
 		}
 
 		return false;

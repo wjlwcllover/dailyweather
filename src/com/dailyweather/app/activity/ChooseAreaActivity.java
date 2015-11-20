@@ -89,10 +89,21 @@ public class ChooseAreaActivity extends Activity {
 				 * 如果当前显示的是城市的名称，那么点击这个item时候就查询这个city的县级名陈。
 				 */
 				if (currentLevel == LEVEL_PROVINCE) {
+
+					// 将被点击的 城市名存到 selectProvince中。
 					selectedProvince = provinces.get(position);
 
+					Toast.makeText(
+							ChooseAreaActivity.this,
+							"点击的城市 是" + selectedProvince.getProvinceName()
+									+ "代号是"
+									+ selectedProvince.getProvinceCode()
+									+ "ID 是"+selectedProvince.getId(),
+							Toast.LENGTH_LONG).show();
 					queryCities();
+
 				} else if (currentLevel == LEVEL_CITY) {
+
 					selectedCity = cities.get(position);
 
 					queryCounties();
@@ -105,45 +116,15 @@ public class ChooseAreaActivity extends Activity {
 		 * 默认加载province信息。
 		 */
 		queryProvinces();
-
-	}
-
-	/**
-	 * 查询city信息，并且加载到当前视图中来
-	 */
-	public void queryCities() {
-
-		cities = coolWeatherDB.loadCity(selectedProvince.getId());
-
-		if (cities.size() == 0) {
-			dataList.clear();
-			for (City c : cities) {
-				dataList.add(c.getCityName());// 将更新的信息加载到视图中来
-			}
-
-			// 检查隐藏的数据是否有更新，有更新时候直接更新
-			adapter.notifyDataSetChanged();
-
-			// 设置初始时选择的位置，默认为第一个元素，也就是O的位置。
-			listView.setSelection(0);
-
-			// 设置TextView 中的文字，也即是当前的province名称。
-			titleTextView
-					.setText(selectedProvince.getProvinceName().toString());
-
-			currentLevel = LEVEL_CITY;
-
-		} else {
-			queryFromServer(selectedProvince.getProvinceCode(), "city");
-		}
 	}
 
 	/**
 	 * 查询province信息，并且加载到当前视图中来
 	 */
-	public void queryProvinces() {
+	private void queryProvinces() {
 		provinces = coolWeatherDB.loadProvinces();
-		if (provinces.size() == 0) {
+
+		if (provinces.size() > 0) {
 			dataList.clear();
 
 			for (Province p : provinces) {
@@ -173,13 +154,49 @@ public class ChooseAreaActivity extends Activity {
 	}
 
 	/**
+	 * 查询city信息，并且加载到当前视图中来
+	 */
+	private  void queryCities() {
+
+		cities = coolWeatherDB.loadCity(selectedProvince.getId());
+
+		if (cities.size() > 0) {
+			// 清空省级名称的显示
+			dataList.clear();
+			for (City c : cities) {
+				dataList.add(c.getCityName());// 将更新的信息加载到视图中来
+			}
+
+			// 检查隐藏的数据是否有更新，有更新时候直接更新
+			adapter.notifyDataSetChanged();
+
+			// 设置初始时选择的位置，默认为第一个元素，也就是O的位置。
+			listView.setSelection(0);
+
+			// 设置TextView 中的文字，也即是当前的province名称。
+			titleTextView
+					.setText(selectedProvince.getProvinceName().toString());
+
+			currentLevel = LEVEL_CITY;
+
+		} else {
+			queryFromServer(selectedProvince.getProvinceCode().toString(),
+					"city");
+		}
+	}
+
+	/**
 	 * 查询county信息，并且加载到当前视图中来
 	 */
-	public void queryCounties() {
+	private  void queryCounties() {
 
 		counties = coolWeatherDB.loadCounties(selectedCity.getId());
-		if (counties.size() == 0) {
+
+		if (counties.size() > 0) {
+
+			// 将城市名称清除，用于显示 县级名称
 			dataList.clear();
+
 			for (County c : counties) {
 				dataList.add(c.getCountyName());
 			}
@@ -188,11 +205,13 @@ public class ChooseAreaActivity extends Activity {
 
 			listView.setSelection(0);
 
+			// 最上面的 一栏显示 当前的城市名称
 			titleTextView.setText(selectedCity.getCityName());
 
 			currentLevel = LEVEL_COUNTY;
+
 		} else {
-			queryFromServer(selectedCounty.getCountyCode(), "county");
+			queryFromServer(selectedCity.getCityCode(), "county");
 
 		}
 	}
@@ -209,6 +228,7 @@ public class ChooseAreaActivity extends Activity {
 		if (!TextUtils.isEmpty(code)) {
 			address = "http://www.weather.com.cn/data/list3/city" + code
 					+ ".xml";
+			// Toast.makeText(this, address, Toast.LENGTH_LONG).show();
 
 		} else {
 			address = "http://www.weather.com.cn/data/list3/city.xml";
@@ -249,6 +269,7 @@ public class ChooseAreaActivity extends Activity {
 								queryCities();
 							} else if ("county".equals(type)) {
 								queryCounties();
+
 							}
 
 						}

@@ -55,7 +55,7 @@ public class CoolWeatherDB {
 	 * @param province
 	 */
 	public void savePronvince(Province province) {
-		if (province == null) {
+		if (province != null) {
 			ContentValues values = new ContentValues();
 
 			values.put("province_name", province.getProvinceName());
@@ -93,7 +93,7 @@ public class CoolWeatherDB {
 
 				list.add(province);
 
-			} while (cursor != null);
+			} while (cursor.moveToNext());
 
 		}
 
@@ -110,7 +110,7 @@ public class CoolWeatherDB {
 	 * @param province
 	 */
 	public void saveCity(City city) {
-		if (city == null) {
+		if (city != null) {
 			ContentValues values = new ContentValues();
 
 			values.put("city_name", city.getCityName());
@@ -139,8 +139,7 @@ public class CoolWeatherDB {
 
 				city.setCityName(cursor.getString(cursor
 						.getColumnIndex("city_name")));
-				city.setProvinceId(cursor.getInt(cursor
-						.getColumnIndex("province_id")));
+				city.setProvinceId(provinceId);
 
 				list.add(city);
 
